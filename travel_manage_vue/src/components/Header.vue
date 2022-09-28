@@ -4,13 +4,8 @@
 			<el-col :span="8">
 				<div style="font-weight: bold">差旅报销系统</div>
 			</el-col>
-			<el-col :span="4">
-				<div class="grid-content bg-purple-light">&nbsp;</div>
-			</el-col>
-			<el-col :span="8">
-				<div class="grid-content bg-purple">&nbsp;</div>
-			</el-col>
-			<el-col :span="4">
+			<el-col :span="15">&nbsp;</el-col>
+			<el-col :span="1">
 				<el-dropdown trigger="click" @command="handleCommand">
                     <span class="el-dropdown-link">
                         {{ename}}<i class="el-icon-arrow-down el-icon--right"></i>

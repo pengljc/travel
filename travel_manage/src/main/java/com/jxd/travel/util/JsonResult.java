@@ -20,6 +20,9 @@ public class JsonResult<E> {
     private String message;
     //数据，不确定返回的泛型类型
     private E data;
+    //数量
+    private Integer total;
+
 
     public JsonResult() {
     }
@@ -35,5 +38,11 @@ public class JsonResult<E> {
     public JsonResult(Integer state, E data) {
         this.state = state;
         this.data = data;
+    }
+
+    public JsonResult(Integer state, E data, Integer total) {
+        this.state = state;
+        this.data = data;
+        this.total = total;
     }
 }

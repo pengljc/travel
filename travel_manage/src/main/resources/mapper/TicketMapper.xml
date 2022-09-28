@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.jxd.travel.mapper.TicketMapper">
+        <resultMap id="ticketWithVehicleToMap" type="Map">
+            <result column="tno" property="tno"/>
+            <result column="leave_place" property="leavePlace"/>
+            <result column="arrive_place" property="arrivePlace"/>
+            <result column="leave_time" property="leaveTime"/>
+            <result column="arrive_time" property="arriveTime"/>
+            <result column="ticket_money" property="ticketMoney"/>
+        </resultMap>
+        <resultMap id="ticketToObject" type="Ticket">
+            <result column="tno" property="tno"/>
+            <result column="leave_place" property="leavePlace"/>
+            <result column="arrive_place" property="arrivePlace"/>
+            <result column="leave_time" property="leaveTime"/>
+            <result column="arrive_time" property="arriveTime"/>
+            <result column="ticket_money" property="ticketMoney"/>
+        </resultMap>
+
+    <select id="selectWithVehicleByEno" resultMap="ticketWithVehicleToMap" >
+        select tno,leave_place, arrive_place,type,
+               date_format(leave_time, '%Y-%c-%d %H:%i')leave_time,
+               date_format(arrive_time, '%Y-%c-%d %H:%i')arrive_time,
+               ticket_money, photo, description,vname
+        from ticket t left join vehicle v
+        on t.vno = v.vno
+        <where>
+            eno = #{eno}
+            <if test="leavePlace != null and leavePlace != ''">
+                and leave_place like '%' #{leavePlace} '%'
+            </if>
+            <if test="arrivePlace != null and arrivePlace != ''">
+                and arrive_place like '%' #{arrivePlace} '%'
+            </if>
+        </where>
+        order by tno
+        limit #{page},#{limit}
+    </select>
+
+    <select id="selectNumsByEno" resultType="Integer">
+        select count(*) from ticket
+        where eno = #{eno};
+    </select>
+
+    <select id="selectNewByEno" resultMap="ticketToObject">
+        select tno, eno, leave_place, arrive_place, leave_time,
+               arrive_time, vno, ticket_money, photo, description, bno, type
+        from ticket t
+        where eno = 10001
+        order by tno desc
+        limit 1
+    </select>
+</mapper>

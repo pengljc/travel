@@ -6,6 +6,9 @@ import Home from "../views/Home";
 import Welcome from "../views/Welcome";
 import Ticket from "../views/staff/Ticket";
 import Reimbursement from "../views/staff/Reimbursement";
+import Ticket_add from "../views/staff/Ticket_add";
+import Ticket_edit from "../views/staff/Ticket_edit";
+
 
 Vue.use(VueRouter)
 
@@ -29,6 +32,8 @@ const routes = [
         children:[
             {path:'/welcome',name:'welcome',component:Welcome,meta:{title:'主页'}},
             {path:'/ticket',name:'ticket',component:Ticket,meta:{title:'车票信息'}},
+            {path:'/ticket/add',name:'ticket_add',component:Ticket_add,meta:{title:'新增车票'}},
+            {path:'/ticket/edit',name:'ticket_edit',component:Ticket_edit,meta:{title:'编辑车票'}},
             {path:'/reimbursement',name:'reimbursement',component:Reimbursement,meta:{title:'报销信息'}},
         ]
     }
