@@ -52,13 +52,13 @@
 						width="50"
 						align="center">
 				</el-table-column>
-				<el-table-column
+<!--				<el-table-column
 						prop="tno"
 						label="车票号"
 						align="center"
 						width="100"
 						sortable>
-				</el-table-column>
+				</el-table-column>-->
 				<el-table-column
 						prop="type"
 						label="类型"
@@ -146,8 +146,9 @@
 	                limit:5
                 },
                 ticketList:[],
+                //选中的记录数
                 checkedData:[],
-	            total:0
+	            total:0,
             }
         },
 	    methods:{
@@ -166,7 +167,7 @@
                 }
             },
 		    getTicketList(){
-                console.log(this.queryMap);
+                // console.log(this.queryMap);
                 this.$http.get('/tickets',{
                     params:this.queryMap
                 }).then((res) => {
@@ -199,9 +200,45 @@
                 //console.log(val);
                 this.checkedData = val
             },
-		    //删除车票操作
-            deleteEmp(){
+		    //批量删除车票
+            deleteEmp() {
+                if (this.checkedData.length == 0) {
+                    this.$message.warning("请选择要删除的记录")
+                    return
+                }
 
+                this.$confirm('此操作将删除所选车票, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    //获取选中的车票编号，放到数组中
+                    let tnos = []
+					//获取选中的车票的图片url
+	                let delImgUrls = []
+
+                    for (let i = 0;i < this.checkedData.length ; i++) {
+                        tnos.push(this.checkedData[i].tno)
+                        delImgUrls.push(this.checkedData[i].photo)
+                    }
+
+                    //调用后台
+                    this.$http.delete('/tickets/',{data:tnos}).then(res => {
+                        if (res.data.state === 200) {
+                            this.getTicketList()
+                            this.$message.success("删除成功")
+	                        //进行图片的删除
+                            this.$http.delete('/files/', {data: delImgUrls})
+                        } else {
+                            //控制台打印错误码和错误信息
+                            console.log(res.data.state);
+                            console.log(res.data.message);
+                            this.$message.error("车票删除出现未知错误，请稍后重试")
+                        }
+                    }).catch(() => {
+                        this.$message.error("车票删除出现未知错误，请稍后重试")
+                    })
+                })
             },
 		    //打开新增车票界面
             openAddViews() {
@@ -217,8 +254,23 @@
                     path:'/ticket/edit'
                 })
             },
-
-
+            /*表格选中项发生变化时触发，就可以通过该方法得到当前的选中记录*/
+            selectChange (val) {
+                // console.log(val[0].tno);
+                this.checkedData = val
+            },
+		    //打开编辑界面
+            openEditViews() {
+                /*判断用户是否只勾选了一条数据*/
+                if (this.checkedData.length > 1 || this.checkedData.length == 0) {
+                    this.$message.warning("请选择一条车票信息进行编辑")
+                    return
+                }
+                //跳转页面
+                this.$router.push({
+                    path:'/ticket/edit/' + this.checkedData[0].tno
+                })
+            }
 	    },
 	    created() {
             this.queryMap.eno = sessionStorage.getItem("eno")

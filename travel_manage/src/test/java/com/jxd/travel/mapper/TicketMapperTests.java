@@ -40,7 +40,33 @@ public class TicketMapperTests {
 
     @Test
     public void selectNewByEno() {
-        Ticket ticket = ticketMapper.selectNewByEno(10001);
+        Ticket ticket = ticketMapper.selectNewByEno(10003);
         System.out.println(ticket);
+    }
+    @Test
+    public void selectByTno() {
+        Ticket ticket = ticketMapper.selectByTno(1016);
+        System.out.println(ticket);
+    }
+
+    @Test
+    public void insert() {
+        Ticket ticket = ticketMapper.selectNewByEno(10002);
+        //Ticket(tno=1011, eno=10001, bno=null, vno=6, type=1, leavePlace=青岛, arrivePlace=济南,
+        // leaveTime=2022-08-26 13:30:00, arriveTime=2022-08-26 16:36:00, ticketMoney=267.0, photo=null, description=null)
+        ticket.setTno(null);
+        ticket.setTicketMoney(280D);
+        ticket.setType(0);
+        ticket.setLeavePlace("济南");
+        ticket.setArrivePlace("北京");
+        Integer insert = ticketMapper.insert(ticket);
+        System.out.println(insert);
+    }
+
+    @Test
+    public void deleteBatch() {
+        Integer[] tnos = new Integer[] {1021,1022,1023,1024};
+        Integer rows = ticketMapper.deleteBatch(tnos);
+        System.out.println(rows);
     }
 }

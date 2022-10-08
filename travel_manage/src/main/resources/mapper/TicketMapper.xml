@@ -21,13 +21,57 @@
             <result column="ticket_money" property="ticketMoney"/>
         </resultMap>
 
+    <insert id="insert">
+        insert into
+            ticket (
+                eno, leave_place, arrive_place, leave_time,arrive_time,
+                vno, ticket_money, photo, type
+        ) values (
+            #{eno}, #{leavePlace}, #{arrivePlace}, #{leaveTime},
+            #{arriveTime}, #{vno}, #{ticketMoney}, #{photo}, #{type}
+        )
+    </insert>
+
+    <update id="updateWhole">
+        update
+            ticket
+        set
+            eno = #{eno},
+            vno = #{vno},
+            type = #{type},
+            leave_time = #{leaveTime},
+            arrive_time = #{arriveTime},
+            leave_place = #{leavePlace},
+            arrive_place = #{arrivePlace},
+            ticket_money = #{ticketMoney},
+            photo = #{photo}
+        where
+            tno=#{tno}
+    </update>
+
+    <delete id="deleteBatch">
+        delete from
+            ticket
+        where
+            tno
+        in
+        <foreach collection="tnos" item="tno" open="(" close=")" separator=",">
+            #{tno}
+        </foreach>
+    </delete>
+
     <select id="selectWithVehicleByEno" resultMap="ticketWithVehicleToMap" >
-        select tno,leave_place, arrive_place,type,
-               date_format(leave_time, '%Y-%c-%d %H:%i')leave_time,
-               date_format(arrive_time, '%Y-%c-%d %H:%i')arrive_time,
-               ticket_money, photo, description,vname
-        from ticket t left join vehicle v
-        on t.vno = v.vno
+        select
+            tno, leave_place, arrive_place, type,
+            date_format(leave_time, '%Y-%c-%d %H:%i')leave_time,
+            date_format(arrive_time, '%Y-%c-%d %H:%i')arrive_time,
+            ticket_money, photo, description, vname
+        from
+            ticket t
+        left join
+            vehicle v
+        on
+            t.vno = v.vno
         <where>
             eno = #{eno}
             <if test="leavePlace != null and leavePlace != ''">
@@ -36,22 +80,46 @@
             <if test="arrivePlace != null and arrivePlace != ''">
                 and arrive_place like '%' #{arrivePlace} '%'
             </if>
+            <if test="bno != null and bno != ''">
+                and bno is null
+            </if>
         </where>
-        order by tno
-        limit #{page},#{limit}
+        order by
+            tno
+        limit #{page}, #{limit}
     </select>
 
     <select id="selectNumsByEno" resultType="Integer">
-        select count(*) from ticket
-        where eno = #{eno};
+        select count(*) from
+            ticket
+        <where>
+            eno = #{eno};
+            <if test="bno != null and bno != ''">
+                and bno is null
+            </if>
+        </where>
     </select>
 
     <select id="selectNewByEno" resultMap="ticketToObject">
-        select tno, eno, leave_place, arrive_place, leave_time,
-               arrive_time, vno, ticket_money, photo, description, bno, type
-        from ticket t
-        where eno = 10001
-        order by tno desc
+        select
+            tno, eno, leave_place, arrive_place, leave_time,
+            arrive_time, vno, ticket_money, photo, description, bno, type
+        from
+            ticket t
+        where
+            eno = #{eno}
+        order by
+            tno desc
         limit 1
+    </select>
+
+    <select id="selectByTno" resultMap="ticketToObject">
+        select
+            tno, eno, leave_place, arrive_place, leave_time,
+            arrive_time, vno, ticket_money, photo, description, bno, type
+        from
+            ticket
+        where
+            tno = #{tno};
     </select>
 </mapper>

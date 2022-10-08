@@ -19,8 +19,8 @@ public class Ticket {
     private Integer bno;
     //交通工具类型号
     private Integer vno;
-    //类型 出发or返回
-    private String type;
+    //类型 出发0 返回1
+    private Integer type;
     //出发地点
     private String leavePlace;
     //到达地点

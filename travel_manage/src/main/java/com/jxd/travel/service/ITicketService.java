@@ -22,7 +22,7 @@ public interface ITicketService {
      * @param enoStr 工号
      * @return {@link Integer} 工号下的所有票数
      */
-    Integer getNumsByEno(String enoStr);
+    Integer getNumsByEno(String enoStr,String bno);
 
     /**
      * 查询当前工号下最新的一条车票信息
@@ -31,4 +31,33 @@ public interface ITicketService {
      * @return {@link Ticket} 最新的车票信息
      */
     Ticket getNewByEno(Integer eno);
+
+    /**
+     * 根据车票号查询车票的数据对象
+     *
+     * @param tno tno 车票号
+     * @return {@link Ticket}  车票的数据对象
+     */
+    Ticket getByTno(Integer tno);
+    /**
+     * 保存一条车票数据
+     *
+     * @param ticket 车票的数据对象
+     * @return {@link Void}
+     */
+    void saveTicket(Ticket ticket);
+
+    /**
+     * 批量删除车票
+     *
+     * @param tnos tno 车票号数组
+     */
+    void deleteBatch(Integer[] tnos);
+
+    /**
+     * 编辑整体车票信息
+     *
+     * @param ticket 车票的数据对象
+     */
+    void editWhole(Ticket ticket);
 }

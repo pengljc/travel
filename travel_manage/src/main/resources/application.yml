@@ -3,6 +3,8 @@ server:
   port: 8086
 #指定数据源信息
 spring:
+  resources:
+    static-locations: file:${web.upload-path}
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://127.0.0.1:3307/travel?serverTimezone=GMT%2B8
@@ -13,3 +15,6 @@ mybatis:
   mapper-locations: classpath*:mapper/*.xml
   #指定实体类的别名
   type-aliases-package: com.jxd.travel.model
+
+web:
+  upload-path: E:/img/tickets/
