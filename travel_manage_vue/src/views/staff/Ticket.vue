@@ -212,6 +212,13 @@
                     cancelButtonText: '取消',
                     type: 'warning'
                 }).then(() => {
+                    for (let i = 0;i < this.checkedData.length ; i++) {
+                        if (this.checkedData[i].description !== undefined) {
+                            this.$message.error("绑定报销票据的车票信息不能删除")
+	                        return
+                        }
+                    }
+
                     //获取选中的车票编号，放到数组中
                     let tnos = []
 					//获取选中的车票的图片url
@@ -247,13 +254,6 @@
                     path:'/ticket/add'
                 })
             },
-		    //打开编辑车票界面
-            openEditViews() {
-                //跳转页面
-                this.$router.push({
-                    path:'/ticket/edit'
-                })
-            },
             /*表格选中项发生变化时触发，就可以通过该方法得到当前的选中记录*/
             selectChange (val) {
                 // console.log(val[0].tno);
@@ -264,6 +264,11 @@
                 /*判断用户是否只勾选了一条数据*/
                 if (this.checkedData.length > 1 || this.checkedData.length == 0) {
                     this.$message.warning("请选择一条车票信息进行编辑")
+                    return
+                }
+                //已绑定的车票不能编辑
+                if (this.checkedData[0].description !== undefined) {
+                    this.$message.error("绑定报销票据的车票信息不能编辑")
                     return
                 }
                 //跳转页面

@@ -39,7 +39,7 @@ public class EmpServiceTests {
             emp.setEno(10000);
             emp.setPassword("123");
 
-            Emp result = empService.getByEno(emp);
+            Emp result = empService.getByEnoLogin(emp);
             System.out.println(result);
 
         } catch (ServiceException e) {

@@ -4,9 +4,60 @@
 
 
 <mapper namespace="com.jxd.travel.mapper.EmpMapper">
+    <insert id="insert">
+        insert into
+            emp (
+                ename, password, sex, phone, postno
+        ) values (
+            #{ename},#{password},#{sex},#{phone},#{postno}
+        )
+    </insert>
+
+    <update id="update">
+        update
+            emp
+        set
+            ename = #{ename},
+            password = #{password},
+            sex = #{sex},
+            phone = #{phone},
+            postno = #{postno}
+        where
+            eno = #{eno}
+    </update>
 
     <select id="selectByEno" resultType="Emp">
         select eno, ename, password, sex, phone, postno from emp
         where eno = #{eno};
+    </select>
+
+    <select id="selectWithPost" resultType="Map">
+        select
+            eno, ename, password, sex, phone, e.postno, pname
+        from
+            emp e
+        left join
+            post p
+        on
+            e.postno = p.postno
+        <where>
+            e.postno != 3
+            <if test="eno != null and eno != ''">
+                and eno = #{eno}
+            </if>
+            <if test="ename != null and ename != ''">
+                and ename like '%' #{ename} '%'
+            </if>
+        </where>
+        order by
+            eno
+        limit #{page}, #{limit}
+    </select>
+
+    <select id="selectNums" resultType="Integer">
+        select count(*) from
+            emp
+        where
+            postno != 3;
     </select>
 </mapper>

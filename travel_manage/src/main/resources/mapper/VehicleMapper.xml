@@ -4,9 +4,65 @@
 
 
 <mapper namespace="com.jxd.travel.mapper.VehicleMapper">
+    <insert id="insert">
+        insert into
+            vehicle (
+                vname
+            ) values (
+                #{vname}
+            );
+    </insert>
+
+    <update id="update">
+        update
+            vehicle
+        set
+            vname = #{vname}
+        where
+            vno = #{vno}
+    </update>
+
+    <delete id="deleteBatch">
+        delete from
+            vehicle
+        where
+            vno
+        in
+        <foreach collection="vnos" item="vno" open="(" close=")" separator=",">
+            #{vno}
+        </foreach>
+    </delete>
 
     <select id="getAllVehicle" resultType="Vehicle">
-        select vno, vname from vehicle
-        order by vno;
+        select
+            vno, vname
+        from
+            vehicle
+        order by
+            vno;
+    </select>
+
+    <select id="getAllWithPage" resultType="Vehicle">
+        select
+            vno, vname
+        from
+            vehicle
+        order by
+            vno
+        limit #{page}, #{limit};
+    </select>
+
+    <select id="getNums" resultType="Integer">
+        select count(*) from
+            vehicle
+    </select>
+
+    <select id="selectByVno" resultType="Vehicle">
+        select
+            vno,vname
+        from
+            vehicle
+        where
+            vno = #{vno}
     </select>
 </mapper>

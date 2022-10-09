@@ -23,4 +23,30 @@ public interface IBillService {
      * @return {@link Integer} 工号下的所有报销票据数量
      */
     Integer getNumsByEno(String enoStr);
+
+    /**
+     * 根据bno得到报销的数据对象
+     *
+     * @param bno bno 报销信息主键
+     * @return {@link Bill} bill的数据对象
+     */
+    Bill getByBno(Integer bno);
+
+    /**
+     * 插入报销票据
+     *
+     * @param map 传入需要插入的参数
+     * @return {@link Integer}
+     */
+    void insertBill(Map<String,Object> map);
+
+    /**
+     * 更新报销票据
+     *
+     * @param map 传入需要的bill参数
+     * @return {@link Integer} 改变的行数
+     */
+    void updateBill(Map<String,Object> map);
+
+    void deleteBatch(Integer[] bnos);
 }

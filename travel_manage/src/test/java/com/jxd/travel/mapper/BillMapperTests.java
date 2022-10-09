@@ -43,4 +43,12 @@ public class BillMapperTests {
         Integer nums = billMapper.selectNumsByEno(10001);
         System.out.println(nums);
     }
+
+    @Test
+    public void insert() {
+        Map<String,Object> map = new HashMap<>();
+        map.put("ename","张三");
+        billMapper.insertBill(map);
+        System.out.println(map.get("bno"));
+    }
 }

@@ -8,6 +8,8 @@ import Ticket from "../views/staff/Ticket";
 import Reimbursement from "../views/staff/Reimbursement";
 import Reimbursement_add from "../views/staff/Reimbursement_add";
 import Ticket_add from "../views/staff/Ticket_add";
+import Emp from "../views/admin/Emp";
+import Vehicle from "../views/admin/Vehicle";
 
 
 
@@ -37,6 +39,9 @@ const routes = [
             {path:'/ticket/edit/:tno',name:'ticket_add',component:Ticket_add,meta:{title:'编辑车票'}},
             {path:'/reimbursement',name:'reimbursement',component:Reimbursement,meta:{title:'报销信息'}},
             {path:'/reimbursement/add',name:'reimbursement_add',component:Reimbursement_add,meta:{title:'报销信息新增'}},
+            {path:'/reimbursement/edit/:bno',name:'reimbursement_add',component:Reimbursement_add,meta:{title:'报销信息编辑'}},
+            {path:'/emp',name:'emp',component:Emp,meta:{title:'员工信息管理'}},
+            {path:'/vehicle',name:'vehicle',component:Vehicle,meta:{title:'交通工具管理'}},
         ]
     }
 ]

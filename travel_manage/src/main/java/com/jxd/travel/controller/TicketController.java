@@ -34,10 +34,17 @@ public class TicketController extends BaseController {
         Ticket result = ticketService.getNewByEno(eno);
         return new JsonResult<Ticket>(OK,result);
     }
+
     @GetMapping("/tno/{tno}")
     public JsonResult<Ticket> getByTno(@PathVariable("tno") Integer tno) {
         Ticket result = ticketService.getByTno(tno);
         return new JsonResult<Ticket>(OK,result);
+    }
+
+    @GetMapping("/bno/{bno}")
+    public JsonResult<List<Map<String,String>>> getByBno(@PathVariable("bno") Integer bno) {
+        List<Map<String, String>> mapList = ticketService.getByBno(bno);
+        return new JsonResult<>(OK,mapList);
     }
 
     @PostMapping

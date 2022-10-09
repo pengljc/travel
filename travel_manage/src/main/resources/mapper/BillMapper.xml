@@ -7,7 +7,47 @@
     <resultMap id="billToObject" type="Bill">
         <result column="bno" property="bno"/>
         <result column="application_time" property="applicationTime"/>
+        <result column="start_time" property="startTime"/>
+        <result column="end_time" property="endTime"/>
     </resultMap>
+
+    <insert id="insertBill" useGeneratedKeys="true" keyProperty="bno">
+        insert into
+            bill(
+                eno, ename, start_time, end_time,
+                application_time, days, money, description
+            ) values (
+                #{eno},#{ename},#{startTime},#{endTime},
+                #{applicationTime},#{days},#{money},#{description}
+            )
+
+    </insert>
+
+    <update id="updateBill">
+        update
+            bill
+        set
+            start_time = #{startTime},
+            end_time = #{endTime},
+            application_time = #{applicationTime},
+            days = #{days},
+            money = #{money},
+            description = #{description}
+        where
+            bno = #{bno}
+    </update>
+
+    <delete id="deleteBatch">
+        delete from
+            bill
+        where
+            bno
+        in
+        <foreach collection="bnos" item="bno" open="(" close=")" separator=",">
+            #{bno}
+        </foreach>
+    </delete>
+
     <select id="selectByEno" resultMap="billToObject">
         select
             bno,
@@ -37,5 +77,18 @@
             bill
         where
             eno = #{eno};
+    </select>
+
+    <select id="selectByBno" resultMap="billToObject">
+        select
+            eno, ename,
+            date_format(start_time, '%Y-%c-%d %H:%i')start_time,
+            date_format(end_time, '%Y-%c-%d %H:%i')end_time,
+            date_format(application_time, '%Y-%c-%d %H:%i')application_time,
+            days, money, description
+        from
+            bill
+        where
+            bno = #{bno}
     </select>
 </mapper>

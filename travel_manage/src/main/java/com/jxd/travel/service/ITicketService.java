@@ -17,6 +17,14 @@ public interface ITicketService {
     List<Map<String, String>> getByEno(Map<String,Object> map);
 
     /**
+     * 通过票据号查询所有车票信息；车票表和交通类型表关联
+     *
+     * @param bno bno 单据号
+     * @return {@link List}<{@link Map}<{@link String},{@link String}>> 属于该单据的所有车票信息的集合
+     */
+    List<Map<String, String>> getByBno(Integer bno);
+
+    /**
      * 查询该工号下的所有票数
      *
      * @param enoStr 工号
@@ -60,4 +68,14 @@ public interface ITicketService {
      * @param ticket 车票的数据对象
      */
     void editWhole(Ticket ticket);
+
+    /**
+     * 根据车票号批量更新
+     *
+     * @param tnos        tno 车票号
+     * @param bno         bno 报销票据号
+     * @param description 出差描述
+     * @return {@link Integer}  改变的行数
+     */
+    void editBatchByTnos(Integer[] tnos, Integer bno, String description);
 }

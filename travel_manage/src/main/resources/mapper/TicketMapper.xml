@@ -49,6 +49,34 @@
             tno=#{tno}
     </update>
 
+    <update id="updateBatchByTno">
+        update
+            ticket
+        set
+            bno = #{bno},
+            description = #{description}
+        where
+            tno
+        in
+        <foreach collection="tnos" item="tno" open="(" close=")" separator=",">
+            #{tno}
+        </foreach>
+    </update>
+
+    <update id="updateBatchByBno">
+        update
+            ticket
+        set
+            bno = null ,
+            description = null
+        where
+            bno
+        in
+        <foreach collection="bnos" item="bno" open="(" close=")" separator=",">
+            #{bno}
+        </foreach>
+    </update>
+
     <delete id="deleteBatch">
         delete from
             ticket
@@ -93,7 +121,7 @@
         select count(*) from
             ticket
         <where>
-            eno = #{eno};
+            eno = #{eno}
             <if test="bno != null and bno != ''">
                 and bno is null
             </if>
@@ -121,5 +149,23 @@
             ticket
         where
             tno = #{tno};
+    </select>
+
+    <select id="selectWithVehicleByBno" resultMap="ticketWithVehicleToMap">
+        select
+            tno, leave_place, arrive_place, type,
+            date_format(leave_time, '%Y-%c-%d %H:%i')leave_time,
+            date_format(arrive_time, '%Y-%c-%d %H:%i')arrive_time,
+            ticket_money, vname
+        from
+            ticket t
+        left join
+            vehicle v
+        on
+            t.vno = v.vno
+        where
+            t.bno = #{bno}
+        order by
+        tno
     </select>
 </mapper>

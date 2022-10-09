@@ -39,6 +39,11 @@ public class TicketServiceImpl implements ITicketService {
     }
 
     @Override
+    public List<Map<String, String>> getByBno(Integer bno) {
+        return ticketMapper.selectWithVehicleByBno(bno);
+    }
+
+    @Override
     public Integer getNumsByEno(String enoStr,String bno) {
         Integer eno = Integer.parseInt(enoStr);
         return ticketMapper.selectNumsByEno(eno,bno);
@@ -77,7 +82,16 @@ public class TicketServiceImpl implements ITicketService {
         Integer rows = ticketMapper.updateWhole(ticket);
         //改变行数不为一行时，抛出异常
         if (rows != 1) {
-            throw new UpdateException("数据库中的车票，修改更新的过程中产生了未知的异常");
+            throw new UpdateException("数据库中的车票，修改的过程中产生了未知的异常");
+        }
+    }
+
+    @Override
+    public void editBatchByTnos(Integer[] tnos, Integer bno, String description) {
+        Integer rows  = ticketMapper.updateBatchByTno(tnos,bno,description);
+        //改变行数不为一行时，抛出异常
+        if (rows != tnos.length) {
+            throw new UpdateException("数据库中的车票，修改的过程中产生了未知的异常");
         }
     }
 

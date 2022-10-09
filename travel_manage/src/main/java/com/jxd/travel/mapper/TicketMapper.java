@@ -1,6 +1,7 @@
 package com.jxd.travel.mapper;
 
 import com.jxd.travel.model.Ticket;
+import org.apache.ibatis.annotations.Param;
 import sun.util.resources.cldr.kea.TimeZoneNames_kea;
 
 import java.util.List;
@@ -24,6 +25,14 @@ public interface TicketMapper {
      * @return {@link List}<{@link Map}<{@link String},{@link String}>> 属于该用户的所有车票信息的集合
      */
     List<Map<String,String>> selectWithVehicleByEno(Map<String,Object> map);
+
+    /**
+     * 通过票据号查询所有车票信息；车票表和交通类型表关联
+     *
+     * @param bno bno 单据号
+     * @return {@link List}<{@link Map}<{@link String},{@link String}>> 属于该单据的所有车票信息的集合
+     */
+    List<Map<String,String>> selectWithVehicleByBno(Integer bno);
 
     /**
      * 查询该工号下的所有票数
@@ -72,4 +81,23 @@ public interface TicketMapper {
      * @return {@link Integer} 更新的行数， 1为修改成功，其余全为修改失败
      */
     Integer updateWhole(Ticket ticket);
+
+    /**
+     * 根据车票号批量更新
+     *
+     * @param tnos        tno 车票号
+     * @param bno        bno 报销票据号
+     * @param description 出差描述
+     * @return {@link Integer}  改变的行数
+     */
+    Integer updateBatchByTno(@Param("tnos")Integer[] tnos, @Param("bno")Integer bno,
+                             @Param("description")String description);
+
+    /**
+     * 批量更新,将该bno的所有bno和description清空
+     *
+     * @param bnos bno 票据号
+     * @return {@link Integer} 改变的行数
+     */
+    Integer updateBatchByBno(@Param("bnos") Integer[] bnos);
 }

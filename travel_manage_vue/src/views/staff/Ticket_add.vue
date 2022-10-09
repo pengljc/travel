@@ -1,11 +1,10 @@
 <template>
 	<div>
 		<el-row>
-			<el-col :span="16">
+			<el-col :span="21">
 				出差情况登记
 			</el-col>
-			<el-col :span="8">
-				<el-button type="primary" @click="save">保存</el-button>
+			<el-col :span="2">
 				<el-button type="primary" @click="submit">提交</el-button>
 			</el-col>
 		</el-row>
@@ -221,9 +220,6 @@
             };
         },
         methods: {
-            onSubmit() {
-                console.log('submit!');
-            },
             //得到所有交通方式
             getAllVehicle() {
                 this.$http.get('/vehicles').then((res) => {
@@ -273,8 +269,6 @@
                     this.ticketForm = res.data.data
                     this.typeLabel = this.ticketForm.type == 1 ? '返回' : '出差'
                     this.dateDifference(this.ticketForm.arriveTime, this.ticketForm.leaveTime)
-                }).catch(() => {
-
                 })
             },
             //时间改变的操作
@@ -315,10 +309,6 @@
                 iMinutes = iMinutes - iDays * 60 * 24 - iHours * 60
                 //给变量赋值并格式化
                 this.timeInterval = iDays + '天' + iHours + '时' + iMinutes + '分'
-            },
-            //保存按钮的点击事件
-            save() {
-
             },
             //点击提交按钮之后的事件
             //判断新增操作还是编辑操作

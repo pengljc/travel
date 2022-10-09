@@ -15,7 +15,6 @@
 							                format="yyyy-MM-dd HH:mm"
 							                :picker-options="startTime"
 							                value-format="yyyy-MM-dd HH:mm"
-							                @change="timeChange"
 											style="width: 175px">
 							</el-date-picker>
 						</el-form-item>
@@ -26,7 +25,6 @@
 							                :picker-options="endTime"
 							                format="yyyy-MM-dd HH:mm"
 							                value-format="yyyy-MM-dd HH:mm"
-							                @change="timeChange"
 							                style="width: 175px">
 							</el-date-picker>
 						</el-form-item>
@@ -41,7 +39,7 @@
 				<div style="float: right">
 					<el-button-group>
 						<el-button type="primary" icon="el-icon-plus" @click="openAddViews">新增</el-button>
-						<el-button type="primary" icon="el-icon-delete" @click="deleteEmp">删除</el-button>
+						<el-button type="primary" icon="el-icon-delete" @click="deleteBill">删除</el-button>
 						<el-button type="primary" icon="el-icon-edit" @click="openEditViews">编辑</el-button>
 					</el-button-group>
 				</div>
@@ -148,13 +146,7 @@
             }
         },
         methods: {
-            formatPhoto: function (row, column, cellValue) {
-                if (cellValue != null) {
-                    return "有"
-                } else {
-                    return "无"
-                }
-            },
+	        //获取该用户下所有报销票据信息
             getBillList() {
                 // console.log(this.queryMap);
                 this.$http.get('/bills', {
@@ -189,35 +181,29 @@
                 //console.log(val);
                 this.checkedData = val
             },
-            //批量删除车票
-            deleteEmp() {
+            //批量删除报销单据
+            deleteBill() {
                 if (this.checkedData.length == 0) {
-                    this.$message.warning("请选择要删除的记录")
+                    this.$message.warning("请选择要删除的单据")
                     return
                 }
 
-                this.$confirm('此操作将删除所选车票, 是否继续?', '提示', {
+                this.$confirm('此操作将删除所选单据, 是否继续?', '提示', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
                     type: 'warning'
                 }).then(() => {
                     //获取选中的车票编号，放到数组中
-                    let tnos = []
-                    //获取选中的车票的图片url
-                    let delImgUrls = []
-
+                    let bnos = []
                     for (let i = 0; i < this.checkedData.length; i++) {
-                        tnos.push(this.checkedData[i].tno)
-                        delImgUrls.push(this.checkedData[i].photo)
+                        bnos.push(this.checkedData[i].bno)
                     }
 
                     //调用后台
-                    this.$http.delete('/tickets/', {data: tnos}).then(res => {
+                    this.$http.delete('/bills/', {data: bnos}).then(res => {
                         if (res.data.state === 200) {
                             this.getBillList()
                             this.$message.success("删除成功")
-                            //进行图片的删除
-                            this.$http.delete('/files/', {data: delImgUrls})
                         } else {
                             //控制台打印错误码和错误信息
                             console.log(res.data.state);
@@ -236,13 +222,6 @@
                     path: '/Reimbursement/add'
                 })
             },
-            //打开编辑车票界面
-            openEditViews() {
-                //跳转页面
-                this.$router.push({
-                    path: '/ticket/edit'
-                })
-            },
             /*表格选中项发生变化时触发，就可以通过该方法得到当前的选中记录*/
             selectChange(val) {
                 // console.log(val[0].tno);
@@ -252,17 +231,20 @@
             openEditViews() {
                 /*判断用户是否只勾选了一条数据*/
                 if (this.checkedData.length > 1 || this.checkedData.length == 0) {
-                    this.$message.warning("请选择一条车票信息进行编辑")
+                    this.$message.warning("请选择一条报销信息进行编辑")
                     return
                 }
-                //跳转页面
+                //跳转编辑页面
                 this.$router.push({
-                    path: '/ticket/edit/' + this.checkedData[0].tno
+                    path: '/Reimbursement/edit/' + this.checkedData[0].bno
                 })
-            }
+            },
+
         },
         created() {
+            //获取工号
             this.queryMap.eno = sessionStorage.getItem("eno")
+	        //查询该工号下的所有报销票据列表
             this.getBillList()
         }
     }
