@@ -231,10 +231,24 @@
             },
             //得到最新一条车票信息
             getNewTicket() {
+
                 this.$http.get('/tickets/eno/' + this.ticketForm.eno).then((res) => {
                     //如果最新一条车票类型为出差，那么此时回显返回，反之亦然
                     //0 出差  1 返回
-                    if (res.data.data.type == 0) {
+	                if (res.data.data === null || res.data.data.type !== 0) {
+                        //无记录（没出差过）
+                        //出差类型设置为出差
+                        this.ticketForm.type = 0;
+                        //出差文本
+                        this.typeLabel = '出差'
+                        //出发地必为济南
+                        this.ticketForm.leavePlace = '济南'
+                        //出发地不可选
+                        this.isLeave = true
+                        //目的地可选
+                        this.isArrive = false
+
+	                } else {
                         //出差类型设置为返回
                         this.ticketForm.type = 1;
                         //出差文本
@@ -247,19 +261,8 @@
                         this.isLeave = true
                         //目的地不可选
                         this.isArrive = true
-                    } else {
-                        //type = 1 或者 无记录（没出差过）
-                        //出差类型设置为出差
-                        this.ticketForm.type = 0;
-                        //出差文本
-                        this.typeLabel = '出差'
-                        //出发地必为济南
-                        this.ticketForm.leavePlace = '济南'
-                        //出发地不可选
-                        this.isLeave = true
-                        //目的地可选
-                        this.isArrive = false
-                    }
+	                }
+
                 }).catch(() => {
                     this.$message.error("服务器错误，数据获取异常")
                 })

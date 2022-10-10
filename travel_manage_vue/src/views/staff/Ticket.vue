@@ -153,7 +153,11 @@
         },
 	    methods:{
             formatPhoto: function (row, column, cellValue){
-                if (cellValue != null) {
+                console.log(cellValue);
+                console.log(cellValue);
+                console.log(cellValue);
+                console.log(cellValue);
+                if (cellValue != null && cellValue !== undefined && cellValue !== '') {
                     return "有"
                 } else {
                     return "无"
@@ -267,7 +271,8 @@
                     return
                 }
                 //已绑定的车票不能编辑
-                if (this.checkedData[0].description !== undefined) {
+                console.log(this.checkedData[0].description);
+                if (this.checkedData[0].description !== undefined && this.checkedData[0].description !== '') {
                     this.$message.error("绑定报销票据的车票信息不能编辑")
                     return
                 }

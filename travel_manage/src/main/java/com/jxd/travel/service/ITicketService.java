@@ -1,10 +1,11 @@
 package com.jxd.travel.service;
 
 import com.jxd.travel.model.Ticket;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
-
+@Transactional
 public interface ITicketService {
     /**
      * 通过工号查询所有车票信息

@@ -1,6 +1,7 @@
 package com.jxd.travel.service;
 
 import com.jxd.travel.model.Emp;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
@@ -12,6 +13,7 @@ import java.util.Map;
  * @Date 2022/9/27
  * @Version 1.0
  */
+@Transactional
 public interface IEmpService {
     /**
      * 通过工号查询员工的数据信息

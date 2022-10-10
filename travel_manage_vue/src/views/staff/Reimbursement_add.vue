@@ -434,6 +434,8 @@
                     this.billForm.endTime = this.checkedData[0].arriveTime
                 }
                 //存入车票号
+	            //清空新增的车票组
+	            this.tnos = []
                 this.tnos.push(this.checkedData[0].tno)
                 this.tnos.push(this.checkedData[1].tno)
                 //清空ticketSelList

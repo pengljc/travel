@@ -167,7 +167,7 @@
                         {required:true,message:'请输入员工姓名',trigger:'blur'}
                     ],
                     password:[
-                        {required:true,postmessage:'请输入员工密码',trigger:'blur'}
+                        {required:true,message:'请输入员工密码',trigger:'blur'}
                     ],
                     postno: [
                         {required: true, message: '请选择员工职位', trigger: ['blur', 'change']}

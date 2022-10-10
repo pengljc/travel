@@ -81,7 +81,7 @@
 
     <select id="selectByBno" resultMap="billToObject">
         select
-            eno, ename,
+            bno, eno, ename,
             date_format(start_time, '%Y-%c-%d %H:%i')start_time,
             date_format(end_time, '%Y-%c-%d %H:%i')end_time,
             date_format(application_time, '%Y-%c-%d %H:%i')application_time,

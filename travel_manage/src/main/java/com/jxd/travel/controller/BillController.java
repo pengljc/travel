@@ -7,6 +7,7 @@ import com.jxd.travel.service.IBillService;
 import com.jxd.travel.service.ITicketService;
 import com.jxd.travel.util.JsonResult;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigInteger;
@@ -64,6 +65,7 @@ public class BillController extends BaseController {
     }
 
     @PutMapping
+    @Transactional
     public JsonResult<Void> editBill(@RequestBody Map<String,Object> map) {
         //取出map中bill中的信息，存入bill集合
         Map bill = (HashMap<String,Object>)map.get("bill");

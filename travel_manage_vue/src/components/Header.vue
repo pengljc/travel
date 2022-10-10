@@ -1,13 +1,13 @@
 <template>
-	<div style="height: 50px">
+	<div class="el-header" style="height: 50px;background-color:steelblue;margin: 0;padding: 0">
 		<el-row>
 			<el-col :span="8">
-				<div style="font-weight: bold">差旅报销系统</div>
+				<div style="font-weight: bold;color: white;margin: 10px 0 0 10px">差旅报销系统</div>
 			</el-col>
-			<el-col :span="15">&nbsp;</el-col>
-			<el-col :span="1">
-				<el-dropdown trigger="click" @command="handleCommand">
-                    <span class="el-dropdown-link">
+			<el-col :span="14">&nbsp;</el-col>
+			<el-col :span="2">
+				<el-dropdown trigger="click" @command="handleCommand" style="margin: 10px 0 0 10px">
+                    <span class="el-dropdown-link" style="color:white;">
                         {{ename}}<i class="el-icon-arrow-down el-icon--right"></i>
                     </span>
 					<el-dropdown-menu slot="dropdown">

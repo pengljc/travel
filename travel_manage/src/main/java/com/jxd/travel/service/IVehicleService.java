@@ -1,10 +1,11 @@
 package com.jxd.travel.service;
 
 import com.jxd.travel.model.Vehicle;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
-
+@Transactional
 public interface IVehicleService {
     /**
      * 得到所有交通方式

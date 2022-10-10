@@ -1,10 +1,12 @@
 package com.jxd.travel.service;
 
 import com.jxd.travel.model.Bill;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
 
+@Transactional
 public interface IBillService {
     /**
      * 通过工号查询所有报销信息；

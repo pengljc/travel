@@ -17,15 +17,6 @@
 				<i :class="nav.icon"></i>
 				<span slot="title">{{nav.content}}</span>
 			</el-menu-item>
-
-			<!--	<el-menu-item index="/ticket">
-					<i class="el-icon-s-ticket"></i>
-					<span slot="title">车票信息</span>
-				</el-menu-item>
-				<el-menu-item index="/reimbursement" >
-					<i class="el-icon-s-check"></i>
-					<span slot="title">报销信息</span>
-				</el-menu-item>-->
 		</el-menu>
 	</div>
 </template>

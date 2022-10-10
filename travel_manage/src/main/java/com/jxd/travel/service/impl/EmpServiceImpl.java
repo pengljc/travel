@@ -47,7 +47,6 @@ public class EmpServiceImpl implements IEmpService {
         if (!result.getPassword().equals(emp.getPassword())) {
             throw new PasswordNotMatchException("密码输入错误");
         }
-
         return result;
     }
 
