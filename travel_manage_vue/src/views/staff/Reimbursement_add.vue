@@ -178,7 +178,7 @@
 					:total="total"
 					:page-size="pageMap.limit"
 					:current-page="pageMap.page"
-					:page-sizes='[5,10,15,20]'
+					:page-sizes='[10,20,30]'
 					@current-change="handleCurrentChange"
 					@size-change="handleSizeChange">
 			</el-pagination>
@@ -204,7 +204,7 @@
                 pageMap: {
                     eno: '',
                     page: 1,
-                    limit: 5,
+                    limit: 10,
                     //作为标记，告诉数据库查询的是bno为null的所有车票信息
                     bno: 1
                 },
@@ -309,10 +309,12 @@
             },
 	        //格式化，对后台取出出差类型值的0和1进行格式化
             formatType: function (row, column, cellValue) {
-                if (cellValue == 0) {
+                if (cellValue === 0) {
                     return "出差"
-                } else if (cellValue == 1) {
+                } else if (cellValue === 1) {
                     return "返回"
+                } else if (cellValue === 2) {
+                    return "中转"
                 }
             },
             /*表格选中项发生变化时触发，就可以通过该方法得到当前的选中记录*/
@@ -403,47 +405,39 @@
                     this.$message.warning("请选择要添加的旅程信息")
                     return
                 }
-                if (this.checkedData.length != 2) {
-                    this.$message.warning("旅程信息必须达到闭环")
-                    return
-                }
-                if (!(this.checkedData[0].arrivePlace === this.checkedData[1].leavePlace
-                    && this.checkedData[0].leavePlace === this.checkedData[1].arrivePlace)) {
-                    this.$message.warning("旅程信息必须达到闭环")
-                    return
-                }
-                //两条信息不能都为出差或者返回
-	            if (this.checkedData[0].type === this.checkedData[1].type) {
+	            //对选中的车票信息按照出发时间进行排序
+	            this.checkedData.sort(function(a, b) {
+	                return new Date(a.leaveTime) < new Date(b.leaveTime)? -1 : 1
+                })
+
+                console.log(this.checkedData);
+                //如果第一项的出差类型不是出差，最后一项的出差类型不是返回，则不闭合
+	            if (this.checkedData[0].type !== 0 || this.checkedData[this.checkedData.length - 1].type !== 1) {
                     this.$message.warning("旅程信息必须达到闭环")
                     return
 	            }
-                //如果是出差，那么到达时间必须比返回的出发时间早
-                if (this.checkedData[0].type === 0) {
-                    if (this.checkedData[0].arriveTime >= this.checkedData[1].leaveTime) {
+
+                //判断地点是否闭合
+                for (let i = 0; i < this.checkedData.length - 1; i++) {
+                    if (this.checkedData[i].arrivePlace !== this.checkedData[i + 1].leavePlace) {
                         this.$message.warning("旅程信息必须达到闭环")
                         return
                     }
-                    this.billForm.startTime = this.checkedData[0].leaveTime
-                    this.billForm.endTime = this.checkedData[1].arriveTime
-                } else {
-                    if (this.checkedData[1].arriveTime >= this.checkedData[0].leaveTime) {
-                        this.$message.warning("旅程信息必须达到闭环")
-                        return
-                    }
-                    this.billForm.startTime = this.checkedData[1].leaveTime
-                    this.billForm.endTime = this.checkedData[0].arriveTime
                 }
                 //存入车票号
 	            //清空新增的车票组
 	            this.tnos = []
-                this.tnos.push(this.checkedData[0].tno)
-                this.tnos.push(this.checkedData[1].tno)
+	            //存入页面显示的车票信息
                 //清空ticketSelList
                 this.ticketSelList = []
-                //存入新选择的内容
-                this.ticketSelList.push(this.checkedData[0])
-                this.ticketSelList.push(this.checkedData[1])
-
+                for (const data of this.checkedData) {
+	                this.tnos.push(data.tno)
+                    this.ticketSelList.push(data)
+                }
+                //出差开始时间
+	            this.billForm.startTime = this.checkedData[0].leaveTime
+	            //出差结束时间
+	            this.billForm.endTime = this.checkedData[this.checkedData.length - 1].arriveTime
                 //计算时间差，出发时间12点之前一天，出发时间12点之后半天
                 //到达时间12点之前半天，到达时间12点之后一天
                 this.timeCal()

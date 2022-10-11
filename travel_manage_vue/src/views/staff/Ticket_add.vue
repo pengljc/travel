@@ -17,8 +17,12 @@
 					<el-form-item label="员工姓名">
 						<el-input style="width: 400px;color: black" :value="ename" disabled></el-input>
 					</el-form-item>
-					<el-form-item label="出差类型">
-						<el-input style="width: 400px;color: black" :value="typeLabel" disabled></el-input>
+					<el-form-item label="出差类型" prop="type">
+						<el-select style="width: 400px" v-model="ticketForm.type" placeholder="请选择出差类型"
+						           :disabled="isType" @change="typeChange">
+							<el-option v-for="type in typeList" :label="type.tname" :value="type.type"
+							           :key="type.type"></el-option>
+						</el-select>
 					</el-form-item>
 
 					<el-form-item label="出发时间" prop="" prop="leaveTime">
@@ -112,6 +116,13 @@
                 if (value === undefined || value == '') {
                     callback(new Error('出发时间不能为空'))
                 } else {
+                    // 如果本次出差类型不是出差
+                    if (this.newArriveTime !== '') {
+                        // 出发时间不能比上一次到达时间早
+                        if (new Date(this.ticketForm.leaveTime) < new Date(this.newArriveTime).getTime()) {
+                            callback(new Error('出发时间不能比上一次到达时间早'))
+                        }
+                    }
                     //出发时间不为空，但是到达时间为空时，不进行时间校验验证
                     if (this.ticketForm.arriveTime == '' || this.ticketForm.arriveTime == undefined) {
                         callback()
@@ -141,18 +152,44 @@
                     if (new Date(this.ticketForm.leaveTime).getTime() >= new Date(this.ticketForm.arriveTime).getTime()) {
                         callback(new Error('到达时间必须大于出发时间'))
                     } else {
-                        this.$refs['ticketForm'].clearValidate(['leaveTime'])
+                        // 如果本次出差类型不是出差
+                        if (this.newArriveTime !== '') {
+                            // 出发时间不能比上一次到达时间早
+                            if (new Date(this.ticketForm.leaveTime).getTime() < new Date(this.newArriveTime).getTime()) {
+                                callback()
+                            } else {
+                                this.$refs['ticketForm'].clearValidate(['leaveTime'])
+                                callback()
+                            }
+                        }
                         callback()
                     }
                 }
-            };
+            }
+            //输入金额的表单验证
+            const validateMoney = (rule, value, callback) => {
+                let reg = /^[+-]?(0|([1-9]\d*))(\.\d+)?$/g;
+                if (value === '') {
+                    callback(new Error('请输入金额'));
+                } else if (!reg.test(value)) {
+                    callback(new Error('输入金额必须为数字'));
+                } else {
+                    callback();
+                }
+            }
             return {
+                //最新一条信息的到达地
+                newArrivePlace: '',
+                //最新一条信息的到达时间
+                newArriveTime: '',
                 //员工姓名
                 ename: '',
                 //目的地是否可填写
                 isArrive: '',
                 //出发地是否可填写
                 isLeave: '',
+                //出差类型是否可填写
+                isType: '',
                 //上传框是否可用
                 uploadDisabled: false,
                 //车票表单对象
@@ -193,12 +230,15 @@
                     vno: [
                         {required: true, message: '交通工具不可为空', trigger: ['blur', 'change']}
                     ],
+                    type: [
+                        {required: true, message: '出差类型不可为空', trigger: ['blur', 'change']}
+                    ],
                     ticketMoney: [
-                        {required: true, message: '车票价格不可为空', trigger: 'blur'}
+                        {required: true, validator: validateMoney, trigger: 'blur'}
                     ]
                 },
-                //出差类型文本
-                typeLabel: '',
+                //出差类型数组
+                typeList: [],
                 //交通方式列表
                 vehList: [],
                 //时间间隔
@@ -211,15 +251,33 @@
                         return time.getTime() < Date.parse(this.ticketForm.leaveTime) - 23 * 3600 * 1000 - 59 * 60 * 1000
                     }
                 },
-                //出发时间中，所有比到达时间早的时间都不可选
+                //出发时间中，所有比到达时间晚的时间都不可选
                 startTime: {
                     disabledDate: time => {
-                        return time.getTime() > Date.parse(this.ticketForm.arriveTime)
+                        console.log("newArriveTime ==>" + this.newArriveTime);
+                        if (this.newArriveTime === '') {
+                            return time.getTime() > Date.parse(this.ticketForm.arriveTime)
+                        } else {
+                            let sHours, sMinutes
+                            sHours = new Date(this.newArriveTime).getHours();
+                            sMinutes = new Date(this.newArriveTime).getMinutes();
+                            //出发时间中，所有比最新一条到达时间早的时间都不可选
+                            return time.getTime() < Date.parse(this.newArriveTime) - sHours * 3600 * 1000 -
+                                sMinutes * 60 * 1000
+                        }
                     }
                 }
             };
         },
         methods: {
+            //得到所有出差方式
+            getTypeList() {
+                this.$http.get('/types').then((res) => {
+                    this.typeList = res.data.data
+                }).catch(() => {
+                    this.$message.error("服务器错误，数据获取异常")
+                })
+            },
             //得到所有交通方式
             getAllVehicle() {
                 this.$http.get('/vehicles').then((res) => {
@@ -229,18 +287,41 @@
                     this.$message.error("服务器错误，数据获取异常")
                 })
             },
+            typeChange() {
+                //如果出差类型为返回
+                if (this.ticketForm.type === 1) {
+                    //目的地必为济南
+                    this.ticketForm.arrivePlace = '济南'
+                    //出发地为最新票据的到达地
+                    this.ticketForm.leavePlace = this.newArrivePlace
+                    //出发地不可选
+                    this.isLeave = true
+                    //目的地不可选
+                    this.isArrive = true
+                } else if (this.ticketForm.type === 2) {
+                    //出发地为最新票据的到达地
+                    this.ticketForm.leavePlace = this.newArrivePlace
+                    //出发地不可选
+                    this.isLeave = true
+                    //清空到达地
+                    this.ticketForm.arrivePlace = ''
+                    //目的地可选
+                    this.isArrive = false
+                }
+
+            },
             //得到最新一条车票信息
             getNewTicket() {
 
                 this.$http.get('/tickets/eno/' + this.ticketForm.eno).then((res) => {
-                    //如果最新一条车票类型为出差，那么此时回显返回，反之亦然
-                    //0 出差  1 返回
-	                if (res.data.data === null || res.data.data.type !== 0) {
+                    //0 出差  1 返回  2中转
+                    //如果最新一条车票类型为返回，那么默认是出差
+                    if (res.data.data === null || res.data.data.type === 1) {
                         //无记录（没出差过）
                         //出差类型设置为出差
                         this.ticketForm.type = 0;
-                        //出差文本
-                        this.typeLabel = '出差'
+                        //出差类型不可选
+                        this.isType = true
                         //出发地必为济南
                         this.ticketForm.leavePlace = '济南'
                         //出发地不可选
@@ -248,20 +329,17 @@
                         //目的地可选
                         this.isArrive = false
 
-	                } else {
-                        //出差类型设置为返回
-                        this.ticketForm.type = 1;
-                        //出差文本
-                        this.typeLabel = '返回'
-                        //目的地必为济南
-                        this.ticketForm.arrivePlace = '济南'
-                        //出发地为当前地点
-                        this.ticketForm.leavePlace = res.data.data.arrivePlace
-                        //出发地不可选
-                        this.isLeave = true
-                        //目的地不可选
-                        this.isArrive = true
-	                }
+                    } else {
+                        //如果出差类型不是出差，那么记录最新一条信息的到达时间
+                        this.newArriveTime = res.data.data.arriveTime
+                        //记录最新一条信息的到达地
+                        this.newArrivePlace = res.data.data.arrivePlace
+                        //删除出差这个选项
+                        this.typeList.shift()
+                        //出差类型可选
+                        this.isType = false
+
+                    }
 
                 }).catch(() => {
                     this.$message.error("服务器错误，数据获取异常")
@@ -270,7 +348,11 @@
             getCurrentTicket() {
                 this.$http.get('/tickets/tno/' + this.ticketForm.tno).then((res) => {
                     this.ticketForm = res.data.data
-                    this.typeLabel = this.ticketForm.type == 1 ? '返回' : '出差'
+                    //如果为出差或者中转
+                    if (this.ticketForm.type !== 1) {
+                        //目的地可填
+                        this.isArrive = false
+                    }
                     this.dateDifference(this.ticketForm.arriveTime, this.ticketForm.leaveTime)
                 })
             },
@@ -330,7 +412,7 @@
                 this.$refs['ticketForm'].validate(valid => {
                     //valid代表校验结果，是布尔类型
                     if (valid) {
-						//向后台查询当前用户下的最新一条车票信息，进行一些数据的初始化
+                        //向后台查询当前用户下的最新一条车票信息，进行一些数据的初始化
                         this.$http.put('/tickets/whole', this.ticketForm).then((res) => {
                             //编辑成功
                             if (res.data.state === 200) {
@@ -395,7 +477,7 @@
                 this.imgShow = true
                 //删除旧图片
                 let param = []
-	            param.push(this.delImgUrl)
+                param.push(this.delImgUrl)
                 this.$http.delete('/files/', {data: param})
             },
             //图片上传前进行校验
@@ -434,7 +516,8 @@
             this.ticketForm.eno = sessionStorage.getItem("eno")
             //查询所有的交通方式
             this.getAllVehicle();
-
+            //查询所有出差方式
+            this.getTypeList();
             if (this.ticketForm.tno === undefined) {
                 //执行新增页面逻辑
                 //查询最新一条车票信息

@@ -28,11 +28,11 @@ public class TicketMapperTests {
     @Test
     public void selectWithVehicleByEno() {
         Map<String,Object> map = new HashMap<>();
-        map.put("eno","10001");
-        map.put("arrivePlace","济");
-        map.put("leavePlace","岛");
+        map.put("eno","10008");
+/*        map.put("arrivePlace","济");
+        map.put("leavePlace","岛");*/
         map.put("page",0);
-        map.put("limit",1);
+        map.put("limit",5);
         System.out.println(map);
         List<Map<String, String>> list = ticketMapper.selectWithVehicleByEno(map);
         System.out.println(list);

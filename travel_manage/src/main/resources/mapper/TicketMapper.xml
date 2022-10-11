@@ -166,6 +166,6 @@
         where
             t.bno = #{bno}
         order by
-        tno
+            t.tno
     </select>
 </mapper>

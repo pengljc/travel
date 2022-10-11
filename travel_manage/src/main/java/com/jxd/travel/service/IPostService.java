@@ -1,6 +1,7 @@
 package com.jxd.travel.service;
 
 import com.jxd.travel.model.Post;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 @Transactional

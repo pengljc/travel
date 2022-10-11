@@ -164,10 +164,12 @@
                 }
             },
             formatType:function (row, column, cellValue){
-                if (cellValue == 0) {
+                if (cellValue === 0) {
                     return "出差"
-                } else if (cellValue == 1) {
+                } else if (cellValue === 1) {
                     return "返回"
+                } else if (cellValue === 2) {
+                    return "中转"
                 }
             },
 		    getTicketList(){
@@ -176,6 +178,7 @@
                     params:this.queryMap
                 }).then((res) => {
                     this.ticketList = res.data.data
+                    console.log(this.ticketList);
 	                this.total = res.data.total
                 }).catch(() =>{
                     this.message.error("服务器出错")
@@ -217,7 +220,8 @@
                     type: 'warning'
                 }).then(() => {
                     for (let i = 0;i < this.checkedData.length ; i++) {
-                        if (this.checkedData[i].description !== undefined) {
+                        if (this.checkedData[i].description !== undefined &&
+	                        this.checkedData[i].description !== '' ) {
                             this.$message.error("绑定报销票据的车票信息不能删除")
 	                        return
                         }

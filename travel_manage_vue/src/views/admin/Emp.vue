@@ -115,7 +115,7 @@
 					<el-radio v-model="empForm.sex" label="1" style="margin-left: 90px" >男</el-radio>
 					<el-radio v-model="empForm.sex" label="0">女</el-radio>
 				</el-form-item>
-				<el-form-item  label="电话" :label-width="formLabelWidth" style="margin-left: 10px">
+				<el-form-item  label="电话" :label-width="formLabelWidth" prop="phone">
 					<el-input style="width: 300px" v-model="empForm.phone" autocomplete="off"></el-input>
 				</el-form-item>
 
@@ -137,6 +137,16 @@
     export default {
         name: "emp",
         data() {
+            const checkPhone = (rule, value, callback) => {
+                // let phoneReg = /(^1[3|4|5|6|7|8|9]\d{9}$)|(^09\d{8}$)/;
+                if (value === '') {
+                    callback(new Error('请输入手机号'))
+                } else if (!this.isCellPhone(value)) { // 引入methods中封装的检查手机格式的方法
+                    callback(new Error('请输入正确的手机号!'))
+                } else {
+                    callback()
+                }
+            }
             return {
                 queryMap: {
                     eno:'',
@@ -171,6 +181,9 @@
                     ],
                     postno: [
                         {required: true, message: '请选择员工职位', trigger: ['blur', 'change']}
+                    ],
+                    phone: [
+                        {required: true, validator: checkPhone, trigger: 'blur'}
                     ]
                 }
             }
@@ -309,6 +322,14 @@
                     }
                 })
             },
+            // 检查手机号
+            isCellPhone (val) {
+                if (!/^1(3|4|5|6|7|8)\d{9}$/.test(val)) {
+                    return false
+                } else {
+                    return true
+                }
+            }
         },
         created() {
             this.getPostList()

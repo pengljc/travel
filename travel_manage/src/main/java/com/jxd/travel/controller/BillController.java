@@ -70,7 +70,7 @@ public class BillController extends BaseController {
         //取出map中bill中的信息，存入bill集合
         Map bill = (HashMap<String,Object>)map.get("bill");
         //取出报销id
-        Integer bno = Integer.parseInt((String) bill.get("bno"));
+        Integer bno = ((Integer) bill.get("bno"));
         //取出出差描述
         String description = (String) bill.get("description");
         //取出关联的票据数组
